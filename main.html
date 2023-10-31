@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Diário</title>
+    <style>
+        /* Estilos CSS aqui */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #tela-inicial, #criar-postagem, #visualizar-postagens {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px #888;
+            display: none;
+        }
+        #postagens {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .postagem {
+            width: 30%;
+            margin: 1%;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela Inicial -->
+    <div id="tela-inicial">
+        <h1>Web Diário</h1>
+        <button onclick="abrirCriarPostagem()">Criar Postagem</button>
+        <button onclick="abrirVisualizarPostagens()">Visualizar Postagens</button>
+    </div>
+
+    <!-- Tela de Criar Postagem -->
+    <div id="criar-postagem" style="display: none;">
+        <h2>Criar uma nova postagem</h2>
+        <label>Data: <input type="date" id="data"></label><br>
+        <label>Título: <input type="text" id="titulo"></label><br>
+        <label>Descrição: <textarea id="descricao"></textarea></label><br>
+        <label>Rodapé: <input type="text" id="rodape"></label><br>
+        <label>Short Description: <input type="text" id="short-description"></label><br>
+        <button onclick="salvarPostagem()">Criar Postagem</button>
+        <button onclick="voltarTelaInicial()">Voltar</button>
+    </div>
+
+    <!-- Tela de Visualização de Postagens -->
+    <div id="visualizar-postagens" style="display: none;">
+        <h3>Postagens</h3>
+        <button onclick="mudarNome()">Mudar Nome</button>
+        <div id="nome-usuario">Nickname</div>
+        <div id="nome-site">Web Diário</div>
+        <div id="copyright">© 2023</div>
+        <div id="postagens"></div>
+        <button onclick="abrirCriarPostagem()">Criar Postagem</button>
+        <button onclick="voltarTelaInicial()">Tela Inicial</button>
+    </div>
+
+    <script>
+        function abrirCriarPostagem() {
+            document.getElementById('tela-inicial').style.display = 'none';
+            document.getElementById('visualizar-postagens').style.display = 'none';
+            document.getElementById('criar-postagem').style.display = 'block';
+        }
+
+        function abrirVisualizarPostagens() {
+            document.getElementById('tela-inicial').style.display = 'none';
+            document.getElementById('criar-postagem').style.display = 'none';
+            document.getElementById('visualizar-postagens').style.display = 'block';
+        }
+
+        function salvarPostagem() {
+            var data = document.getElementById('data').value;
+            var titulo = document.getElementById('titulo').value;
+            var descricao = document.getElementById('descricao').value;
+            var rodape = document.getElementById('rodape').value;
+            var shortDescription = document.getElementById('short-description').value;
+            
+            var postagem = {
+                data: data,
+                titulo: titulo,
+                descricao: descricao,
+                rodape: rodape,
+                shortDescription: shortDescription
+            };
+
+            // Lógica para salvar a postagem no Local Storage
+            var postagens = JSON.parse(localStorage.getItem('postagens')) || [];
+            postagens.push(postagem);
+            localStorage.setItem('postagens', JSON.stringify(postagens));
+            alert('Postagem criada com sucesso!');
+        }
+
+        function voltarTelaInicial() {
+            document.getElementById('criar-postagem').style.display = 'none';
+            document.getElementById('visualizar-postagens').style.display = 'none';
+            document.getElementById('tela-inicial').style display = 'block';
+        }
+
+        function mudarNome() {
+            var novoNome = prompt("Digite seu novo nome:");
+            if (novoNome !== null) {
+                document.getElementById('nome-usuario').innerText = novoNome;
+            }
+        }
+
+        // Função para carregar e exibir postagens
+        function carregarPostagens() {
+            var postagens = JSON.parse(localStorage.getItem('postagens')) || [];
+            var postagensDiv = document.getElementById('postagens');
+            postagensDiv.innerHTML = '';
+
+            postagens.forEach(function(postagem) {
+                var postagemDiv = document.createElement('div');
+                postagemDiv.classList.add('postagem');
+                postagemDiv.innerHTML = `
+                    <h3>${postagem.titulo}</h3>
+                    <p>Data: ${postagem.data}</p>
+                    <p>${postagem.descricao}</p>
+                    <p>Rodapé: ${postagem.rodape}</p>
+                    <p>Short Description: ${postagem.shortDescription}</p>
+                `;
+                postagensDiv.appendChild(postagemDiv);
+            });
+        }
+
+        // Carregar postagens quando a página for carregada
+        window.onload = function() {
+            carregarPostagens();
+        }
+    </script>
+</body>
+</html>
